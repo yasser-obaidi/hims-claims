@@ -1,0 +1,49 @@
+﻿using Microsoft.OpenApi.Models;
+using ClamManagement.Repo;
+
+namespace ClamManagement.Helper
+{
+    internal static class ServiceCollection
+    {
+
+
+        internal static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            return services
+               
+
+
+            ;//end of repositories
+        }
+        internal static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            return services
+                .AddScoped<IUnitOfWork, UnitOfWork>()
+            ;//end of services
+        }
+
+
+
+        internal static IServiceCollection AddSwagger(this IServiceCollection services)
+        {
+            return services.AddSwaggerGen(options =>
+            {
+                string[] methodsOrder = new string[] { "get", "post", "put", "patch", "delete", "options", "trace" };
+                options.OrderActionsBy(apiDesc => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{Array.IndexOf(methodsOrder, apiDesc.HttpMethod.ToLower())}");
+                options.CustomSchemaIds(type => type.ToString());
+                
+
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Policy Api",
+
+                });
+                
+
+            });
+        }
+
+
+    }
+}
