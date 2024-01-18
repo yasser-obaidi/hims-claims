@@ -20,5 +20,7 @@ namespace ClaimManagement.Data.Entities
         public bool IsActive { get; set; }
         public int DisplayOrder { get; set; }
         public ICollection<TPA>? TPAs { get; set; }
+        public ICollection<Claim>? Claims { get; set; }
+        
     }
 }

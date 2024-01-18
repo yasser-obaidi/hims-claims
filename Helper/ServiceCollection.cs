@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using ClamManagement.Repo;
+using ClaimManagement.Logger;
 
 namespace ClamManagement.Helper
 {
@@ -44,6 +45,11 @@ namespace ClamManagement.Helper
             });
         }
 
-
+        internal static ILoggingBuilder AddDbLogger(this ILoggingBuilder builder, Action<DbLoggerOptions> configure)
+        {
+            builder.Services.AddSingleton<ILoggerProvider, DbLoggerProvider>();
+            builder.Services.Configure(configure);
+            return builder;
+        }
     }
 }

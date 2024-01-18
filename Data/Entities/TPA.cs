@@ -19,6 +19,8 @@ namespace ClaimManagement.Data.Entities
         public string Address { get; set; }
         public bool IsActive { get; set; }
         public int DisplayOrder { get; set; }
-        public ICollection<NetworkProvider> NetworkProviders { get; set; }
+        public ICollection<NetworkProvider>? NetworkProviders { get; set; }
+        public ICollection<Claim>? Claims { get; set; }
+
     }
 }
