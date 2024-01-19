@@ -22,7 +22,8 @@ namespace ClamManagement.Data
         public DbSet<NetworkProvider> NetworkProviders { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=192.168.1.3;port=3306;user=user;password=123456;database=Clam;Convert Zero Datetime=True;");
+          //  optionsBuilder.UseMySQL("server=192.168.1.3;port=3306;user=user;password=123456;database=Clam;Convert Zero Datetime=True;");
+            optionsBuilder.UseMySQL("server=localhost;port=3306;user=Ibrahem;password=123456;database=Clam;Convert Zero Datetime=True;");
 
         }
         public override int SaveChanges()

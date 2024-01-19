@@ -2,6 +2,7 @@
 {
     public enum Result
     {
+        None,
         PASS,
         FAIL
     }

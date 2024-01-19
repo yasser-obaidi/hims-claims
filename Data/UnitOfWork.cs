@@ -6,7 +6,6 @@ namespace ClamManagement.Repo
 {
     public interface IUnitOfWork
     {
-       
         void Dispose();
         Task<int> SaveChangesAsync();
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using ClamManagement.Repo;
 using ClaimManagement.Logger;
+using ClaimManagement.Data.Services;
 
 namespace ClamManagement.Helper
 {
@@ -19,6 +20,7 @@ namespace ClamManagement.Helper
         internal static IServiceCollection AddServices(this IServiceCollection services)
         {
             return services
+                .AddScoped<IClaimService,ClaimService>()
                 .AddScoped<IUnitOfWork, UnitOfWork>()
             ;//end of services
         }

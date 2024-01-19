@@ -2,6 +2,7 @@
 {
     public enum ClaimStatus
     {
+
         PENDING,
         ADJUDICATED,
         PAID
