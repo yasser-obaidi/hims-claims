@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
-using ClamManagement.Repo;
 using ClaimManagement.Logger;
 using ClaimManagement.Data.Services;
+using ClamManagement.Data;
 
 namespace ClamManagement.Helper
 {

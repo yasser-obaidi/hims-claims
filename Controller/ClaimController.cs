@@ -16,6 +16,14 @@ namespace ClaimManagement.Controller
         {
                 _claimService = claimService;
         }
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var test = new Claim();
+            
+            return Ok(test
+            );
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
