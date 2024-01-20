@@ -6,6 +6,7 @@ using ClaimManagement.Data.Entities;
 using ClaimManagement.Model;
 using ClaimManagement.Enums;
 using ClamManagement.Data;
+using ClamManagement.Helper;
 namespace ClaimManagement.Data.Services
 {
     public interface IClaimService
@@ -13,6 +14,7 @@ namespace ClaimManagement.Data.Services
         Task<object> ImportClaimsFromExcelFile(IFormFile file);
         Dictionary<string,string>? ExcelSheetMapper(ClaimEcxalSheetMappingModel Model);
         Dictionary<string,string>? GetExcelSheetMapper();
+        Task<ClaimOutputModelDetailed?> GetClaimByIdAsync(int id);
     }
     public class ClaimService : IClaimService
     {
@@ -442,5 +444,9 @@ namespace ClaimManagement.Data.Services
             }
         }
 
+        public async Task<ClaimOutputModelDetailed?> GetClaimByIdAsync(int id)
+        {
+            return (await _unitOfWork.ClaimRepo.FindById(id)).MapTo<ClaimOutputModelDetailed>();
+        }
     }
 }

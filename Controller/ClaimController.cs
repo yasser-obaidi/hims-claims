@@ -16,29 +16,11 @@ namespace ClaimManagement.Controller
         {
                 _claimService = claimService;
         }
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var test = new Claim();
-            
-            return Ok(test
-            );
-        }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
-        }
-
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+            return Ok(await _claimService.GetClaimByIdAsync(id));
         }
 
         [HttpPut("ExcelSheetMapper")]

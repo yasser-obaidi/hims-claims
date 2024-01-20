@@ -1,4 +1,5 @@
 ﻿using System;
+using ClaimManagement.Data.Repo;
 using ClamManagement.Data;
 using ClamManagement.Data.Entities;
 
@@ -7,6 +8,7 @@ namespace ClamManagement.Data
     public interface IUnitOfWork
     {
         IWebHostEnvironment WebHostEnvironment { get; }
+        IClaimRepo ClaimRepo { get; }
         void Dispose();
         Task<int> SaveChangesAsync();
 
@@ -16,11 +18,13 @@ namespace ClamManagement.Data
         private Context _db ;
         public IWebHostEnvironment WebHostEnvironment { get; }
 
+        public IClaimRepo ClaimRepo { get; }
 
-        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment)
+        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment, IClaimRepo claimRepo)
         {
             _db = context;
             WebHostEnvironment = webHostEnvironment;
+            ClaimRepo = claimRepo;
         }
         public async Task<int> SaveChangesAsync()
         {
