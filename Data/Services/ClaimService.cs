@@ -1,18 +1,16 @@
 ﻿
 using ClaimManagement.Helper;
-using ClamManagement.Repo;
 using Newtonsoft.Json;
 using OfficeOpenXml;
-using System.ComponentModel;
-using System.Diagnostics;
 using ClaimManagement.Data.Entities;
 using ClaimManagement.Model;
 using ClaimManagement.Enums;
+using ClamManagement.Data;
 namespace ClaimManagement.Data.Services
 {
     public interface IClaimService
     {
-        Task<object> getfile(IFormFile file);
+        Task<object> ImportClaimsFromExcelFile(IFormFile file);
         Dictionary<string,string>? ExcelSheetMapper(ClaimEcxalSheetMappingModel Model);
         Dictionary<string,string>? GetExcelSheetMapper();
     }
@@ -57,11 +55,11 @@ namespace ClaimManagement.Data.Services
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
             return dictionary;
         }
-        public async Task<object> getfile(IFormFile file)
+        public async Task<object> ImportClaimsFromExcelFile(IFormFile file)
         {
            return await ReadExcelFile(file);
         }
-        private async Task<object>? ReadExcelFile(IFormFile file)
+        private async Task<List<Claim>>? ReadExcelFile(IFormFile file)
         {
 
             if (file == null)
@@ -92,14 +90,12 @@ namespace ClaimManagement.Data.Services
                 file.CopyTo(stream);
             }
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            object funds;
+            List<Claim> funds;
             using (var stream = new FileStream(saveToPath, FileMode.Open))
             {
                 funds = await ImportFromXlsFile(stream);
             }
 
-            // USe this to handle Encodeing differences in .NET Core
-            // read the excel file
            
             return funds;
         }
@@ -128,7 +124,7 @@ namespace ClaimManagement.Data.Services
 
             return properties;
         }
-        private async Task<object> ImportFromXlsFile(Stream stream)
+        private async Task<List<Claim>> ImportFromXlsFile(Stream stream)
         {
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             using (var xlPackage = new ExcelPackage(stream))

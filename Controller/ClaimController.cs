@@ -51,10 +51,10 @@ namespace ClaimManagement.Controller
         {
             return Ok(_claimService.GetExcelSheetMapper());
         }
-        [HttpPost("test")]
-        public async Task<IActionResult> testz( IFormFile f)
+        [HttpPost("ImportFromExcelFile")]
+        public async Task<IActionResult> ImportFromExcelFile(IFormFile file)
         {
-            return Ok(await _claimService.getfile(f));
+            return Ok(await _claimService.ImportClaimsFromExcelFile(file));
         }
    
     }

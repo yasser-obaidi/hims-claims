@@ -2,7 +2,7 @@
 using ClamManagement.Data;
 using ClamManagement.Data.Entities;
 
-namespace ClamManagement.Repo
+namespace ClamManagement.Data
 {
     public interface IUnitOfWork
     {
