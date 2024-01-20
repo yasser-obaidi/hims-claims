@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using ClaimManagement.Data.Entities;
 using ClaimManagement.Model;
+using ClaimManagement.Enums;
 namespace ClaimManagement.Data.Services
 {
     public interface IClaimService
@@ -35,7 +36,7 @@ namespace ClaimManagement.Data.Services
             {
                 var strinsgValue = item.GetValue(Model);
 
-                var stringValue = strinsgValue?.ToString();
+                var stringValue = strinsgValue?.ToString().ToLower();
 
                 if (string.IsNullOrEmpty(stringValue) || OldMappedKeys.Contains(stringValue))
                 {
@@ -119,7 +120,7 @@ namespace ClaimManagement.Data.Services
                         break;
 
                     poz += 1;
-                    properties.Add(new PropertyByName<T>(test[cell?.Value?.ToString()]));
+                    properties.Add(new PropertyByName<T>(test[cell?.Value?.ToString().ToLower()]));
                 }
                 catch
                 {
@@ -192,16 +193,247 @@ namespace ClaimManagement.Data.Services
                                 }
                                 importedClaim.ClaimDate = DateTime.Parse(property.StringValue);
                                 break;
+                            case "TPAId":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.TPAId = property.IntValue;
+                                break;
+                            case "TPAClaimReferenceNumber":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.TPAClaimReferenceNumber = property.StringValue.Trim();
+                                break;
+                            case "NetworkProviderId":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.NetworkProviderId = property.IntValue;
+                                break;
+                            case "NetworkProviderInvoiceNumber":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.NetworkProviderInvoiceNumber = property.StringValue.Trim();
+                                break;
+                            case "ProcedureDate":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.ProcedureDate =DateTime.Parse( property.StringValue);
+                                break;
+                            case "ServiceCategoryId":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.ServiceCategoryId = property.IntValue;
+                                break;
+                            case "ServiceName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.ServiceName = property.StringValue.Trim();
+                                break;
+                            case "PatientName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.PatientName = property.StringValue.Trim();
+                                break;
+                            case "CardNo":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.CardNo = property.StringValue.Trim();
+                                break;
+                            case "DiagnosticCode":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.DiagnosticCode = property.StringValue.Trim();
+                                break;
+
+                            case "DiagnosticDescription":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.DiagnosticDescription = property.StringValue.Trim();
+                                break;
+                            case "AdmissionDate":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AdmissionDate = DateTime.Parse( property.StringValue);
+                                break;
+                            case "DischargeDate":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.DischargeDate = DateTime.Parse( property.StringValue);
+                                break;
+                            case "TreatmentCountry":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.TreatmentCountry = property.StringValue.Trim();
+                                break;
+                            case "IsReimbursement":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.IsReimbursement =bool.Parse( property.StringValue);
+                                break;
+
+                            case "AmountClaimedOriginalCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountClaimedOriginalCurrency = property.DecimalValue;
+                                break;
+
+                            case "OriginalCurrencyCode":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.OriginalCurrencyCode = property.StringValue.Trim();
+                                break;
+
+                            case "AmountClaimedPlanCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountClaimedPlanCurrency = property.DecimalValue;
+                                break;
+
+                            case "PlanCurrencyCode":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.PlanCurrencyCode = property.StringValue.Trim();
+                                break;
+
+                            case "AmountApprovedOriginalCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountApprovedOriginalCurrency = property.DecimalValue;
+                                break;
+
+                            case "AmountApprovedPlanCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountApprovedPlanCurrency = property.DecimalValue;
+                                break;
+
+                            case "CoPaymentOriginalCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.CoPaymentOriginalCurrency = property.StringValue.Trim();
+                                break;
+
+                            case "CoPaymentPlanCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.CoPaymentPlanCurrency = property.StringValue.Trim();
+                                break;
+
+                            case "AmountPaidOriginalCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountPaidOriginalCurrency = property.DecimalValue;
+                                break;
+
+                            case "AmountPaidPlanCurrency":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.AmountPaidPlanCurrency = property.DecimalValue;
+                                break;
+
+                            case "PaymentMethod":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.PaymentMethod = (PaymentMethod)Enum.Parse( typeof(PaymentMethod), property.StringValue.Trim().ToUpper());
+                                break;
+
                             case "Notes":
                                 if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
                                 {
                                     isValidRow = false;
                                     break;
                                 }
-                                importedClaim.Notes = property.StringValue.Trim();
+                                importedClaim.Notes = property.StringValue;
                                 break;
 
-                       
+                            case "PolicyId":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.PolicyId = property.IntValue;
+                                break;
+
+
+
                         }
                     }
 
