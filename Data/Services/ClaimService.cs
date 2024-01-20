@@ -18,12 +18,10 @@ namespace ClaimManagement.Data.Services
     }
     public class ClaimService : IClaimService
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUnitOfWork _unitOfWork;
-        public ClaimService(IUnitOfWork unitOfWork,IWebHostEnvironment webHostEnvironment)
+        public ClaimService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _webHostEnvironment = webHostEnvironment;
         }
         public Dictionary<string, string>? ExcelSheetMapper(ClaimEcxalSheetMappingModel Model)
         {
@@ -71,7 +69,7 @@ namespace ClaimManagement.Data.Services
 
 
             // Create the Directory if it is not exist
-            string dirPath = Path.Combine(_webHostEnvironment.ContentRootPath, "ReceivedClaims");
+            string dirPath = Path.Combine(_unitOfWork.WebHostEnvironment.ContentRootPath, "ReceivedClaims");
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -280,7 +278,7 @@ namespace ClaimManagement.Data.Services
                                     isValidRow = false;
                                     break;
                                 }
-                                importedClaim.DiagnosticDescription = property.StringValue.Trim();
+                                importedClaim.DiagnosticDescription = property.StringValue;
                                 break;
                             case "AdmissionDate":
                                 if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
@@ -437,14 +435,9 @@ namespace ClaimManagement.Data.Services
                         }
                     }
 
-                    if (isValidRow)
-                    {
-                        importedClaims.Add(importedClaim);
-                    }
-                    else
-                    {
-                        Debug.WriteLine(iRow);
-                    }
+                    
+                    importedClaims.Add(importedClaim);
+                    
                     iRow++;
 
                 }

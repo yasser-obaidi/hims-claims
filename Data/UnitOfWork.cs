@@ -6,6 +6,7 @@ namespace ClamManagement.Repo
 {
     public interface IUnitOfWork
     {
+        IWebHostEnvironment WebHostEnvironment { get; }
         void Dispose();
         Task<int> SaveChangesAsync();
 
@@ -13,13 +14,13 @@ namespace ClamManagement.Repo
     public class UnitOfWork : IUnitOfWork
     {
         private Context _db ;
+        public IWebHostEnvironment WebHostEnvironment { get; }
 
 
-        public UnitOfWork(Context context)
+        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment)
         {
             _db = context;
-           
-
+            WebHostEnvironment = webHostEnvironment;
         }
         public async Task<int> SaveChangesAsync()
         {
