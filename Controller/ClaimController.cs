@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClaimManagement.Controller
 {
 
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ClaimController : ControllerBase
     {

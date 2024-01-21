@@ -9,6 +9,7 @@ namespace ClamManagement.Data
     {
         IWebHostEnvironment WebHostEnvironment { get; }
         IClaimRepo ClaimRepo { get; }
+        ITPARepo TPARepo { get; }
         void Dispose();
         Task<int> SaveChangesAsync();
 
@@ -19,12 +20,14 @@ namespace ClamManagement.Data
         public IWebHostEnvironment WebHostEnvironment { get; }
 
         public IClaimRepo ClaimRepo { get; }
+        public ITPARepo TPARepo { get; }
 
-        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment, IClaimRepo claimRepo)
+        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment, IClaimRepo claimRepo, ITPARepo tPARepo)
         {
             _db = context;
             WebHostEnvironment = webHostEnvironment;
             ClaimRepo = claimRepo;
+            TPARepo = tPARepo;
         }
         public async Task<int> SaveChangesAsync()
         {

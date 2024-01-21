@@ -2,6 +2,7 @@
 using ClaimManagement.Logger;
 using ClaimManagement.Data.Services;
 using ClamManagement.Data;
+using ClaimManagement.Data.Repo;
 
 namespace ClamManagement.Helper
 {
@@ -11,8 +12,9 @@ namespace ClamManagement.Helper
 
         internal static IServiceCollection AddRepositories(this IServiceCollection services)
         {
+
             return services
-               
+               .AddScoped<IClaimRepo,ClaimRepo>()
 
 
             ;//end of repositories

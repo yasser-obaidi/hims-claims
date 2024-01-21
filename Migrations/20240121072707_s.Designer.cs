@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClaimManagement.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240118124237_addedClaim")]
-    partial class addedClaim
+    [Migration("20240121072707_s")]
+    partial class s
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -145,7 +145,7 @@ namespace ClaimManagement.Migrations
 
                     b.HasIndex("TPAId");
 
-                    b.ToTable("Claim");
+                    b.ToTable("Claims");
                 });
 
             modelBuilder.Entity("ClaimManagement.Data.Entities.NetworkProvider", b =>

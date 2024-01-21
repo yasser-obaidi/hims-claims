@@ -142,7 +142,7 @@ namespace ClaimManagement.Migrations
 
                     b.HasIndex("TPAId");
 
-                    b.ToTable("Claim");
+                    b.ToTable("Claims");
                 });
 
             modelBuilder.Entity("ClaimManagement.Data.Entities.NetworkProvider", b =>

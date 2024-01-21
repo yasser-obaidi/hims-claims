@@ -450,11 +450,26 @@ namespace ClaimManagement.Data.Services
         {
             return (await _unitOfWork.ClaimRepo.FindById(id)).MapTo<ClaimOutputModelDetailed>();
         }
+        private async Task<bool> ClaimsAreValid(IQueryable<Claim> claims)
+        {
+            var claimNumbers = claims.Select(claim => claim.ClaimNumber);
+            
 
+            if (await _unitOfWork.ClaimRepo.Any(claim => claimNumbers.Contains(claim.ClaimNumber) )) // check if claims have enters before 
+            {
+
+            }
+            var TpaIds = claims.Select(x=>x.TPAId);
+            if(await _unitOfWork.TPARepo.All(TPA=>TpaIds.Contains(TPA.Id)))
+            {
+
+            }
+            throw new NotImplementedException();
+        }
+        
         public async Task<List<ClaimOutputModelSimple>> GetClaimsAsync()
         {
-            var res =(await _unitOfWork.ClaimRepo.FindByCondition(x=>true)).MapTo<ClaimOutputModelSimple>();
-            return await res.ToListAsync();
+            throw new NotImplementedException();
         }
     }
 }
