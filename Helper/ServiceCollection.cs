@@ -1,8 +1,9 @@
 ﻿using Microsoft.OpenApi.Models;
 using ClaimManagement.Logger;
-using ClaimManagement.Data.Services;
 using ClamManagement.Data;
-using ClaimManagement.Data.Repo;
+using ClaimManagement.Repo;
+using ClaimManagement.Services;
+using ClaimManagement.Services.PolicyManagement;
 
 namespace ClamManagement.Helper
 {
@@ -15,6 +16,8 @@ namespace ClamManagement.Helper
 
             return services
                .AddScoped<IClaimRepo,ClaimRepo>()
+               .AddScoped<INetworkProviderRepo,NetworkProviderRepo>()
+               .AddScoped<ITPARepo,TPARepo>()
 
 
             ;//end of repositories
@@ -23,6 +26,7 @@ namespace ClamManagement.Helper
         {
             return services
                 .AddScoped<IClaimService,ClaimService>()
+                .AddScoped<IPolicyManagement,PolicyManagement>()    
                 .AddScoped<IUnitOfWork, UnitOfWork>()
             ;//end of services
         }

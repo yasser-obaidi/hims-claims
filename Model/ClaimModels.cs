@@ -57,11 +57,14 @@ namespace ClaimManagement.Model
         public string? ClaimNumber { get; set; }
         public string? ClaimDate { get; set; }
         public string? TPAId { get; set; }
+        public string? TPAName { get; set; }
         public string? TPAClaimReferenceNumber { get; set; }
         public string? NetworkProviderId { get; set; }
+        public string? NetworkProviderName { get; set; }
         public string? NetworkProviderInvoiceNumber { get; set; }
         public string? ProcedureDate { get; set; }
         public string? ServiceCategoryId { get; set; }
+        public string? ServiceCategoryName { get; set; }
         public string? ServiceName { get; set; }
         public string? CardNo { get; set; }
         public string? PatientName { get; set; }
@@ -82,17 +85,22 @@ namespace ClaimManagement.Model
         public string? PaymentMethod { get; set; }
         public string? Notes { get; set; }
         public string? PolicyId { get; set; }
+        public string? PolicyName { get; set; }
+
     }
     public class ClaimInputModel
     {
         public string? ClaimNumber { get; set; }
         public DateTime ClaimDate { get; set; }
         public int TPAId { get; set; }
+        public string? TPAName { get; set; }
         public string? TPAClaimReferenceNumber { get; set; }
         public int NetworkProviderId { get; set; }
+        public string? NetworkProviderName { get; set; }
         public string? NetworkProviderInvoiceNumber { get; set; }
         public DateTime ProcedureDate { get; set; }
         public int ServiceCategoryId { get; set; }
+        public string? ServiceCategoryName { get; set; }
         public string? ServiceName { get; set; }
         public string? CardNo { get; set; }
         public string? PatientName { get; set; }
@@ -113,5 +121,6 @@ namespace ClaimManagement.Model
         public PaymentMethod PaymentMethod { get; set; }
         public string? Notes { get; set; }
         public int PolicyId { get; set; }
+        public string? PolicyName { get; set; }
     }
 }

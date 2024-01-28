@@ -1,5 +1,6 @@
 ﻿using System;
-using ClaimManagement.Data.Repo;
+using ClaimManagement.Repo;
+using ClaimManagement.Services.PolicyManagement;
 using ClamManagement.Data;
 using ClamManagement.Data.Entities;
 
@@ -10,6 +11,9 @@ namespace ClamManagement.Data
         IWebHostEnvironment WebHostEnvironment { get; }
         IClaimRepo ClaimRepo { get; }
         ITPARepo TPARepo { get; }
+        IPolicyManagement PolicyManagement { get; }
+        INetworkProviderRepo NetworkProviderRepo { get; }
+
         void Dispose();
         Task<int> SaveChangesAsync();
 
@@ -21,13 +25,18 @@ namespace ClamManagement.Data
 
         public IClaimRepo ClaimRepo { get; }
         public ITPARepo TPARepo { get; }
+        public INetworkProviderRepo NetworkProviderRepo { get; }
 
-        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment, IClaimRepo claimRepo, ITPARepo tPARepo)
+        public IPolicyManagement PolicyManagement { get; }
+
+        public UnitOfWork(Context context, IWebHostEnvironment webHostEnvironment, IClaimRepo claimRepo, ITPARepo tPARepo, IPolicyManagement policyManagement,INetworkProviderRepo networkProviderRepo)
         {
             _db = context;
             WebHostEnvironment = webHostEnvironment;
             ClaimRepo = claimRepo;
             TPARepo = tPARepo;
+            this.PolicyManagement = policyManagement;
+            this.NetworkProviderRepo = networkProviderRepo;
         }
         public async Task<int> SaveChangesAsync()
         {

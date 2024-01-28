@@ -1,11 +1,8 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
-using ClamManagement.Data.Entities;
-using System.Security.Principal;
 using ClamManagement.Data.Entities.Commen;
 using ClaimManagement.Data.Entities;
-using ClamManagement.Data.Services;
+using ClamManagement.Services;
 namespace ClamManagement.Data
 {
     public class Context : DbContext
@@ -51,7 +48,7 @@ namespace ClamManagement.Data
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var userId = await _userManagement.GetUserId();
+            var userId = 0;
             foreach (var entry in ChangeTracker.Entries<BaseEntity>().ToList())
             {
                 switch (entry.State)

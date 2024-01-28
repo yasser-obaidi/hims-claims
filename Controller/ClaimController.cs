@@ -1,6 +1,6 @@
 ﻿using ClaimManagement.Data.Entities;
-using ClaimManagement.Data.Services;
 using ClaimManagement.Model;
+using ClaimManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -44,7 +44,8 @@ namespace ClaimManagement.Controller
         [HttpPost("ImportFromExcelFile")]
         public async Task<IActionResult> ImportFromExcelFile(IFormFile file)
         {
-            return Ok(await _claimService.ImportClaimsFromExcelFile(file));
+            await _claimService.ImportClaimsFromExcelFile(file);
+            return Ok();
         }
    
     }

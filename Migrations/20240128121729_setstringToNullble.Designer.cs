@@ -3,6 +3,7 @@ using System;
 using ClamManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClaimManagement.Migrations
 {
     [DbContext(typeof(Context))]
-    partial class ContextModelSnapshot : ModelSnapshot
+    [Migration("20240128121729_setstringToNullble")]
+    partial class setstringToNullble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,12 +220,15 @@ namespace ClaimManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -234,31 +240,38 @@ namespace ClaimManagement.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("DisplayOrder")
+                    b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("NameCode")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("PhoneLandLine")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RepresentativeEmail")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RepresentativeMobileNo")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("RepresentativeName")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("UpdatedAt")

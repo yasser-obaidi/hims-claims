@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using ClamManagement.Data;
 
-namespace ClaimManagement.Data.Repo
+namespace ClaimManagement.Repo
 {
     public interface ITPARepo 
     {

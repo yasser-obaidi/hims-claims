@@ -8,11 +8,12 @@ using ClaimManagement.Enums;
 using ClamManagement.Data;
 using ClamManagement.Helper;
 using Microsoft.EntityFrameworkCore;
-namespace ClaimManagement.Data.Services
+using ZstdSharp.Unsafe;
+namespace ClaimManagement.Services
 {
     public interface IClaimService
     {
-        Task<object> ImportClaimsFromExcelFile(IFormFile file);
+        Task ImportClaimsFromExcelFile(IFormFile file);
         Dictionary<string,string>? ExcelSheetMapper(ClaimEcxalSheetMappingModel Model);
         Dictionary<string,string>? GetExcelSheetMapper();
         Task<ClaimOutputModelDetailed?> GetClaimByIdAsync(int id);
@@ -59,11 +60,56 @@ namespace ClaimManagement.Data.Services
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
             return dictionary;
         }
-        public async Task<object> ImportClaimsFromExcelFile(IFormFile file)
+        public async Task ImportClaimsFromExcelFile(IFormFile file)
         {
-           return await ReadExcelFile(file);
+            var importedClaims = await ReadExcelFile(file);
+            var NetworkProviders = await GetNetworkProvidersByClaims(importedClaims);
+            
+            if (NetworkProviders.Count() != importedClaims.GroupBy(x => x.NetworkProviderName).Count())
+            {
+                throw new Exception("NetworkProvider are not found");
+            }
+            var TPAs = await GetTPAsByClaims(importedClaims);
+            if (TPAs.Count()!= importedClaims.GroupBy(x=>x.TPAName).Count())
+            {
+                throw new Exception("TPA are not found");
+            }
+            
+            var policy = await _unitOfWork.PolicyManagement.GetPolicyByClaims(importedClaims);
+            //if (await policy?.CountAsync() != importedClaims.GroupBy(x=>x.PolicyName).Count())
+            //{
+            //    throw new Exception("plan");
+            //}
+            importedClaims.ForEach(claim =>
+            {
+                claim.TPAId = TPAs.Where(tpa=>tpa.Name == claim.TPAName).First().Id;
+                claim.NetworkProviderId = NetworkProviders.Where(networkProvider=>networkProvider.Name == claim.NetworkProviderName).First().Id;
+                claim.PolicyId = (int)policy.Where(policy=>policy.Name == claim.PolicyName).First().Id;
+            }); 
+            var claims = importedClaims.MapTo<List<Claim>>();
+            
+            _unitOfWork.ClaimRepo.AddRange(claims);
+            await _unitOfWork.SaveChangesAsync();
         }
-        private async Task<List<Claim>>? ReadExcelFile(IFormFile file)
+
+       
+
+        private async Task<List<TPA>> GetTPAsByClaims(List<ClaimInputModel> importedClaims)
+        {
+
+
+            var tpaNames = importedClaims.GroupBy(claim => claim.TPAName).Select(claimGroup=> claimGroup.Key.ToLower().Trim());
+            return await (await _unitOfWork.TPARepo.FindByCondition(tpa=> tpaNames.Contains(tpa.Name.ToLower().Trim()))).ToListAsync();
+        }
+
+        private async Task<List<NetworkProvider>> GetNetworkProvidersByClaims(List<ClaimInputModel> importedClaims)
+        {
+
+            var networkProviderNames = importedClaims.GroupBy(claim => claim.NetworkProviderName).Select(claimGroup=> claimGroup.Key.ToLower().Trim());
+            return await ( await _unitOfWork.NetworkProviderRepo.FindByCondition(networkProvider=> networkProviderNames.Contains(networkProvider.Name.ToLower().Trim()))).ToListAsync();
+        }
+
+        private async Task<List<ClaimInputModel>>? ReadExcelFile(IFormFile file)
         {
 
             if (file == null)
@@ -82,9 +128,9 @@ namespace ClaimManagement.Data.Services
 
             string extension = Path.GetExtension(dataFileName);
 
-            string[] allowedExtsnions = new string[] { ".xls", ".xlsx" };
+            string[] allowedFileExtsnions = new string[] { ".xls", ".xlsx" };
 
-            if (!allowedExtsnions.Contains(extension))
+            if (!allowedFileExtsnions.Contains(extension))
                 throw new Exception("Sorry! This file is not allowed, make sure that file having extension as either.xls or.xlsx is uploaded.");
 
             // Make a Copy of the Posted File from the Received HTTP Request
@@ -94,7 +140,7 @@ namespace ClaimManagement.Data.Services
                 file.CopyTo(stream);
             }
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            List<Claim> funds;
+            List<ClaimInputModel> funds;
             using (var stream = new FileStream(saveToPath, FileMode.Open))
             {
                 funds = await ImportFromXlsFile(stream);
@@ -128,7 +174,7 @@ namespace ClaimManagement.Data.Services
 
             return properties;
         }
-        private async Task<List<Claim>> ImportFromXlsFile(Stream stream)
+        private async Task<List<ClaimInputModel>> ImportFromXlsFile(Stream stream)
         {
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             using (var xlPackage = new ExcelPackage(stream))
@@ -138,12 +184,12 @@ namespace ClaimManagement.Data.Services
                 if (worksheet == null)
                     throw new Exception("No worksheet found");
 
-                var importedClaims = new List<Claim>();
+                var importedClaims = new List<ClaimInputModel>();
 
                 //the columns
-                var properties = await GetPropertiesByExcelCells<Claim>(worksheet);
+                var properties = await GetPropertiesByExcelCells<ClaimInputModel>(worksheet);
 
-                var manager = new PropertyManager<Claim>(properties);
+                var manager = new PropertyManager<ClaimInputModel>(properties);
 
                 var iRow = 2;
                 bool isValidRow;
@@ -160,20 +206,12 @@ namespace ClaimManagement.Data.Services
                     manager.ReadFromXlsx(worksheet, iRow);
 
                     isValidRow = true;
-                    var importedClaim = new Claim();
+                    var importedClaim = new ClaimInputModel();
 
                     foreach (var property in manager.GetProperties)
                     {
                         switch (property.PropertyName.Trim())
                         {
-                            case "Id":
-                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
-                                {
-                                    isValidRow = false;
-                                    break;
-                                }
-                                importedClaim.Id = property.IntValue;
-                                break;
 
                             case "ClaimNumber":
                                 if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
@@ -385,23 +423,7 @@ namespace ClaimManagement.Data.Services
                                 importedClaim.CoPaymentPlanCurrency = property.StringValue.Trim();
                                 break;
 
-                            case "AmountPaidOriginalCurrency":
-                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
-                                {
-                                    isValidRow = false;
-                                    break;
-                                }
-                                importedClaim.AmountPaidOriginalCurrency = property.DecimalValue;
-                                break;
-
-                            case "AmountPaidPlanCurrency":
-                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
-                                {
-                                    isValidRow = false;
-                                    break;
-                                }
-                                importedClaim.AmountPaidPlanCurrency = property.DecimalValue;
-                                break;
+                            
 
                             case "PaymentMethod":
                                 if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
@@ -429,6 +451,39 @@ namespace ClaimManagement.Data.Services
                                 }
                                 importedClaim.PolicyId = property.IntValue;
                                 break;
+                            case "PolicyName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.PolicyName = property.StringValue;
+                                break;
+                            case "ServiceCategoryName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.ServiceCategoryName = property.StringValue;
+                                break;
+                            case "TPAName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.TPAName = property.StringValue;
+                                break;
+                            case "NetworkProviderName":
+                                if (string.IsNullOrWhiteSpace(property.StringValue.Trim()))
+                                {
+                                    isValidRow = false;
+                                    break;
+                                }
+                                importedClaim.NetworkProviderName = property.StringValue;
+                                break;
+
 
 
 

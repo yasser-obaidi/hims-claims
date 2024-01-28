@@ -3,7 +3,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using System.Net.Http.Headers;
 using System.Web;
 
-namespace ClamManagement.Data.Services
+namespace ClamManagement.Services
 {
     public interface IUserManagement
     {
@@ -18,6 +18,7 @@ namespace ClamManagement.Data.Services
         }
         public async  Task<int> GetUserId()
         {
+            return 0;
             var context = _httpContextAccessor.HttpContext;
 
             var httpClient = new HttpClient();
