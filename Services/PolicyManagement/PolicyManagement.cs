@@ -25,7 +25,7 @@ public class PolicyManagement : IPolicyManagement
 
            
             // Array of names
-            var names = claims.Select(x=>x.PolicyName);
+            var names = claims.GroupBy(x=>x.PolicyName).Select(x=>x.Key);
 
             // Convert the array of names to JSON
             string json = JsonConvert.SerializeObject(names);

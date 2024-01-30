@@ -62,32 +62,50 @@ namespace ClaimManagement.Services
         }
         public async Task ImportClaimsFromExcelFile(IFormFile file)
         {
-            var importedClaims = await ReadExcelFile(file);
+            var importedClaims = (await ReadExcelFile(file));
             var NetworkProviders = await GetNetworkProvidersByClaims(importedClaims);
-            
-            if (NetworkProviders.Count() != importedClaims.GroupBy(x => x.NetworkProviderName).Count())
+            var claimGroupedByNetworkProvider = importedClaims.GroupBy(x => x.NetworkProviderName);
+
+            foreach (var claimGrop in claimGroupedByNetworkProvider)
             {
-                throw new Exception("NetworkProvider are not found");
+               var networkProviderId = NetworkProviders.Where(x=>x.Name == claimGrop.Key).SingleOrDefault()?.Id;
+               if (networkProviderId != null)
+                {
+                    foreach (var item in claimGrop)
+                    {
+                        item.NetworkProviderId = (int)networkProviderId;
+                    }
+                }
             }
+            var claimGroupedByTPAs = claimGroupedByNetworkProvider.SelectMany(x=>x).GroupBy(x=>x.TPAName);
             var TPAs = await GetTPAsByClaims(importedClaims);
-            if (TPAs.Count()!= importedClaims.GroupBy(x=>x.TPAName).Count())
+
+            foreach (var claimGrop in claimGroupedByTPAs)
             {
-                throw new Exception("TPA are not found");
+                var TPAId = TPAs.Where(x => x.Name == claimGrop.Key).SingleOrDefault()?.Id;
+                if (TPAId != null)
+                {
+                    foreach (var item in claimGrop)
+                    {
+                        item.TPAId = (int)TPAId;
+                    }
+                }
             }
-            
-            var policy = await _unitOfWork.PolicyManagement.GetPolicyByClaims(importedClaims);
-            //if (await policy?.CountAsync() != importedClaims.GroupBy(x=>x.PolicyName).Count())
-            //{
-            //    throw new Exception("plan");
-            //}
-            importedClaims.ForEach(claim =>
+
+            var policies = await _unitOfWork.PolicyManagement.GetPolicyByClaims(importedClaims);
+            var claimGroupedByPolicy = claimGroupedByTPAs.SelectMany(x => x).GroupBy(x => x.PolicyName);
+            foreach (var claimGrop in claimGroupedByPolicy)
             {
-                claim.TPAId = TPAs.Where(tpa=>tpa.Name == claim.TPAName).First().Id;
-                claim.NetworkProviderId = NetworkProviders.Where(networkProvider=>networkProvider.Name == claim.NetworkProviderName).First().Id;
-                claim.PolicyId = (int)policy.Where(policy=>policy.Name == claim.PolicyName).First().Id;
-            }); 
-            var claims = importedClaims.MapTo<List<Claim>>();
-            
+                var PolicyId = policies.Where(x => x.Name == claimGrop.Key).SingleOrDefault()?.Id;
+                if (PolicyId != null)
+                {
+                    foreach (var item in claimGrop)
+                    {
+                        item.NetworkProviderId = (int)PolicyId;
+                    }
+                }
+            }
+            var claims = claimGroupedByPolicy.SelectMany(x=>x).MapTo<List<Claim>>();
             _unitOfWork.ClaimRepo.AddRange(claims);
             await _unitOfWork.SaveChangesAsync();
         }

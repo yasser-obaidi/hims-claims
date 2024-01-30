@@ -73,9 +73,9 @@ namespace ClamManagement.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfiguration(new CategoryConfigurations());
-          
-            
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(DbContext).Assembly);
+
+
             base.OnModelCreating(modelBuilder);
         }
         
